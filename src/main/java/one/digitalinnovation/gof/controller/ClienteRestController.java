@@ -1,5 +1,7 @@
 package one.digitalinnovation.gof.controller;
 
+import one.digitalinnovation.gof.exception.BusinessException;
+import one.digitalinnovation.gof.model.dto.ClientsResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,12 +31,12 @@ public class ClienteRestController {
 	private ClienteService clienteService;
 
 	@GetMapping
-	public ResponseEntity<Iterable<Cliente>> buscarTodos() {
+	public ResponseEntity<ClientsResponseDTO> buscarTodos() throws BusinessException {
 		return ResponseEntity.ok(clienteService.buscarTodos());
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Cliente> buscarPorId(@PathVariable Long id) {
+	public ResponseEntity<Cliente> buscarPorId(@PathVariable Long id) throws BusinessException {
 		return ResponseEntity.ok(clienteService.buscarPorId(id));
 	}
 

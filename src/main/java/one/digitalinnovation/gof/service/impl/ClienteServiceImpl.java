@@ -2,6 +2,9 @@ package one.digitalinnovation.gof.service.impl;
 
 import java.util.Optional;
 
+import one.digitalinnovation.gof.exception.BusinessException;
+import one.digitalinnovation.gof.model.dto.ClientsResponseDTO;
+import one.digitalinnovation.gof.model.mapper.GetAllClientesResponseMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,21 +32,34 @@ public class ClienteServiceImpl implements ClienteService {
 	private EnderecoRepository enderecoRepository;
 	@Autowired
 	private ViaCepService viaCepService;
-	
-	// Strategy: Implementar os métodos definidos na interface.
-	// Facade: Abstrair integrações com subsistemas, provendo uma interface simples.
 
 	@Override
-	public Iterable<Cliente> buscarTodos() {
-		// Buscar todos os Clientes.
-		return clienteRepository.findAll();
+	public ClientsResponseDTO buscarTodos() throws BusinessException {
+		// Buscar todos os Clientes e faz o filtro para retornar apenas dados necessários p apresentação em lista.
+
+		try {
+			Iterable<Cliente> clientes = clienteRepository.findAll();
+			return new GetAllClientesResponseMapper(clientes).getResponse();
+		} catch (Exception e) {
+			throw new BusinessException(e.getMessage(), e);
+		}
 	}
 
 	@Override
-	public Cliente buscarPorId(Long id) {
+	public Cliente buscarPorId(Long id) throws BusinessException {
 		// Buscar Cliente por ID.
-		Optional<Cliente> cliente = clienteRepository.findById(id);
-		return cliente.get();
+
+		try {
+			Optional<Cliente> cliente = Optional.ofNullable(clienteRepository.findById(id).orElseThrow(() ->
+							new RuntimeException("Id não Encontrado")));
+			Cliente client = new Cliente();
+			if (cliente.isPresent()) {
+				client =  cliente.get();
+			}
+			return client;
+		} catch (RuntimeException e) {
+			throw new BusinessException(e.getMessage(), e.getLocalizedMessage(), "", e);
+		}
 	}
 
 	@Override
