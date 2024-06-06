@@ -2,7 +2,9 @@ package one.digitalinnovation.gof.service;
 
 import one.digitalinnovation.gof.exception.BusinessException;
 import one.digitalinnovation.gof.model.Cliente;
+import one.digitalinnovation.gof.model.dto.ClientsDTO;
 import one.digitalinnovation.gof.model.dto.ClientsResponseDTO;
+import one.digitalinnovation.gof.model.dto.CreateClientDTO;
 
 /**
  * Interface que define o padrão <b>Strategy</b> no domínio de cliente. Com
@@ -17,10 +19,10 @@ public interface ClienteService {
 
 	Cliente buscarPorId(Long id) throws BusinessException;
 
-	void inserir(Cliente cliente);
+	ClientsDTO insert(CreateClientDTO cliente) throws BusinessException;
 
-	void atualizar(Long id, Cliente cliente);
+	ClientsDTO update(Long id, CreateClientDTO cliente) throws BusinessException;
 
-	void deletar(Long id);
+	void deletar(Long id) throws BusinessException;
 
 }

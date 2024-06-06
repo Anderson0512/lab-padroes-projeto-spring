@@ -30,4 +30,8 @@ public class BusinessException extends Exception {
     super(message, cause);
     this.errorResponse = new ErrorResponse(errorCode, message, details, LocalDate.now());
   }
+
+  public BusinessException(String s) {
+    super(s);
+  }
 }

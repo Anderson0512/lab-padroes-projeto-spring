@@ -1,0 +1,5 @@
+
+#trust store location
+trust.store: classpath:keystore/viacep.crt
+  #trust store password
+trust.store.password: password

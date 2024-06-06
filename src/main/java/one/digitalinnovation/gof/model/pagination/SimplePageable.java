@@ -1,10 +1,14 @@
 package one.digitalinnovation.gof.model.pagination;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class SimplePageable {
-  boolean moreElements = Boolean.FALSE;
+  @JsonProperty("_moreElements")
+  boolean moreElements;
+
+  public SimplePageable() {
+    this.moreElements = Boolean.FALSE;
+  }
 }

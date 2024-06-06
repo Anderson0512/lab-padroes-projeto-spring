@@ -3,7 +3,6 @@ package one.digitalinnovation.gof.exception.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -14,7 +13,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ErrorResponse implements Serializable {
-  @Serial
   static final long serialVersionUID = -3387516993124229948L;
 
   @JsonProperty("_errorCode")
