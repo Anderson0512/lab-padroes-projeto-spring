@@ -1,5 +1,7 @@
 
-#trust store location
-trust.store: classpath:keystore/viacep.crt
-  #trust store password
-trust.store.password: password
+url:
+  viaCep: https://viacep.com.br/ws/
+
+server:
+  port: 8090
+  contextPath: /exp_clients_bd

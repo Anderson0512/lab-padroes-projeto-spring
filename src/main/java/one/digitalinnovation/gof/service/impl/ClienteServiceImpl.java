@@ -9,6 +9,7 @@ import one.digitalinnovation.gof.model.dto.CreateClientDTO;
 import one.digitalinnovation.gof.model.mapper.GetAllClientesResponseMapper;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import one.digitalinnovation.gof.model.Cliente;
@@ -16,7 +17,6 @@ import one.digitalinnovation.gof.model.ClienteRepository;
 import one.digitalinnovation.gof.model.Endereco;
 import one.digitalinnovation.gof.model.EnderecoRepository;
 import one.digitalinnovation.gof.service.ClienteService;
-import one.digitalinnovation.gof.service.ViaCepService;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -30,10 +30,12 @@ public class ClienteServiceImpl implements ClienteService {
   // Singleton: Injetar os componentes do Spring com @Autowired.
   private final ClienteRepository clienteRepository;
   private final EnderecoRepository enderecoRepository;
-//  private final ViaCepService viaCepService;
-  private RestTemplate restTemplate;
+  private final RestTemplate restTemplate;
+  private final String url;
+
   @Autowired
-  public ClienteServiceImpl(ClienteRepository clienteRepository, EnderecoRepository enderecoRepository, RestTemplate restTemplate) {
+  public ClienteServiceImpl(@Value("${url.viaCep}") String url, ClienteRepository clienteRepository, EnderecoRepository enderecoRepository, RestTemplate restTemplate) {
+    this.url = url;
     this.clienteRepository = clienteRepository;
     this.enderecoRepository = enderecoRepository;
     this.restTemplate = restTemplate;
@@ -101,7 +103,9 @@ public class ClienteServiceImpl implements ClienteService {
       cliente.setNome(client.getName());
       cliente.setProfissao(client.getProfession());
       cliente.setIdade(client.getAge());
-      cliente.getEndereco().setCep(client.getZipCode());
+      Endereco end = new Endereco();
+      end.setCep(client.getZipCode());
+      cliente.setEndereco(end);
       Optional<Cliente> clienteBd = clienteRepository.findById(id);
       if (clienteBd.isPresent()) {
         salvarClienteComCep(cliente);
@@ -132,10 +136,9 @@ public class ClienteServiceImpl implements ClienteService {
     // Verificar se o Endereco do Cliente já existe (pelo CEP).
     String cep = cliente.getEndereco().getCep();
     Endereco endereco = enderecoRepository.findById(cep).orElseGet(() -> {
-      // Caso não exista, integrar com o ViaCEP e persistir o retorno.
-//      Endereco newAddress = viaCepService.consultarCep(cep);
-      String url = "https://viacep.com.br/ws/".concat(cep).concat("/json/");
-      Endereco newAddress = restTemplate.getForEntity(url, Endereco.class).getBody();
+      String urlViaCep = url.concat(cep).concat("/json/");
+      Endereco newAddress = restTemplate.getForEntity(urlViaCep, Endereco.class).getBody();
+      assert newAddress != null;
       enderecoRepository.save(newAddress);
       return newAddress;
     });
