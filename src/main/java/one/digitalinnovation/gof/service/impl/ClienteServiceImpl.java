@@ -3,6 +3,7 @@ package one.digitalinnovation.gof.service.impl;
 import java.util.Optional;
 
 import one.digitalinnovation.gof.exception.BusinessException;
+import one.digitalinnovation.gof.exception.CepException;
 import one.digitalinnovation.gof.model.dto.ClientsDTO;
 import one.digitalinnovation.gof.model.dto.ClientsResponseDTO;
 import one.digitalinnovation.gof.model.dto.CreateClientDTO;
@@ -89,32 +90,26 @@ public class ClienteServiceImpl implements ClienteService {
       ClientsDTO result = new ClientsDTO();
       result.setName(client.getName());
       return result;
-    } catch (Exception e) {
-      throw new BusinessException("Não foi possível salvar o cliente", e);
+    } catch (CepException e) {
+      throw new BusinessException(e.getErroCode(), e.getMessage(), e.getDetails(), e);
     }
   }
 
   @Override
-  public ClientsDTO update(Long id, CreateClientDTO client) throws BusinessException {
+  public ClientsDTO update(Long id, Cliente client) throws BusinessException {
     // Buscar Cliente por ID, caso exista:
     try {
 
-      Cliente cliente = new Cliente();
-      cliente.setNome(client.getName());
-      cliente.setProfissao(client.getProfession());
-      cliente.setIdade(client.getAge());
-      Endereco end = new Endereco();
-      end.setCep(client.getZipCode());
-      cliente.setEndereco(end);
+
       Optional<Cliente> clienteBd = clienteRepository.findById(id);
       if (clienteBd.isPresent()) {
-        salvarClienteComCep(cliente);
+        salvarClienteComCep(client);
       } else {
         throw new BusinessException("Id inválido/Cliente não encontrado");
       }
 
       ClientsDTO result = new ClientsDTO();
-      result.setName(client.getName());
+      result.setName(client.getNome());
       result.setId(String.valueOf(clienteBd.get().getId()));
       return result;
     } catch (Exception e) {
@@ -132,9 +127,12 @@ public class ClienteServiceImpl implements ClienteService {
     }
   }
 
-  private void salvarClienteComCep(Cliente cliente) {
+  private void salvarClienteComCep(Cliente cliente) throws CepException {
     // Verificar se o Endereco do Cliente já existe (pelo CEP).
     String cep = cliente.getEndereco().getCep();
+    if (8 != cep.length()) {
+      throw new CepException("400", "CEP inválido", "CEP");
+    }
     Endereco endereco = enderecoRepository.findById(cep).orElseGet(() -> {
       String urlViaCep = url.concat(cep).concat("/json/");
       Endereco newAddress = restTemplate.getForEntity(urlViaCep, Endereco.class).getBody();

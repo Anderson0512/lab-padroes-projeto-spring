@@ -49,7 +49,7 @@ public class ClienteRestController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<ClientsDTO> update(@PathVariable Long id, @RequestBody CreateClientDTO client) throws BusinessException {
+	public ResponseEntity<ClientsDTO> update(@PathVariable Long id, @RequestBody Cliente client) throws BusinessException {
 		return ResponseEntity.ok(clienteService.update(id, client));
 	}
 

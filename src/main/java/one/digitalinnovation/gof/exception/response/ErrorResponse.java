@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -25,5 +26,5 @@ public class ErrorResponse implements Serializable {
   private String details;
 
   @JsonProperty("_timestamp")
-  private LocalDate timestamp;
+  private LocalDateTime timestamp;
 }
