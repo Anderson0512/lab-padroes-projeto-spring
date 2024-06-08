@@ -1,4 +1,16 @@
-
+spring:
+  datasource:
+    url: jdbc:h2:mem:banco
+    driverClassName: org.h2.Driver
+    username: sa
+    password: sa
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+  h2:
+    console:
+      path: /h2
+      enabled: true
 url:
   viaCep: https://viacep.com.br/ws/
 

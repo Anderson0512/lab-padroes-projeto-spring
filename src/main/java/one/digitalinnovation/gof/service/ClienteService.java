@@ -21,7 +21,7 @@ public interface ClienteService {
 
 	ClientsDTO insert(CreateClientDTO cliente) throws BusinessException;
 
-	ClientsDTO update(Long id, Cliente cliente) throws BusinessException;
+	ClientsDTO update(Long id, CreateClientDTO cliente) throws BusinessException;
 
 	void deletar(Long id) throws BusinessException;
 

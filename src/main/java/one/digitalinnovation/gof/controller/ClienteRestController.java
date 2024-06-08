@@ -26,7 +26,7 @@ import one.digitalinnovation.gof.service.ClienteService;
  *
  */
 @RestController
-@RequestMapping("clientes")
+@RequestMapping("/clientes")
 public class ClienteRestController {
 
 	@Autowired
@@ -49,7 +49,7 @@ public class ClienteRestController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<ClientsDTO> update(@PathVariable Long id, @RequestBody Cliente client) throws BusinessException {
+	public ResponseEntity<ClientsDTO> update(@PathVariable Long id, @RequestBody CreateClientDTO client) throws BusinessException {
 		return ResponseEntity.ok(clienteService.update(id, client));
 	}
 

@@ -96,25 +96,32 @@ public class ClienteServiceImpl implements ClienteService {
   }
 
   @Override
-  public ClientsDTO update(Long id, Cliente client) throws BusinessException {
+  public ClientsDTO update(Long id, CreateClientDTO client) throws BusinessException {
     // Buscar Cliente por ID, caso exista:
-    try {
+    ClientsDTO clientsResponse = new ClientsDTO();
 
+    clienteRepository.findById(id)
+            .map(clientBase -> {
+              clientBase.setNome(client.getName());
+              clientBase.setProfissao(client.getProfession());
+              clientBase.setIdade(client.getAge());
+              clientBase.getEndereco().setCep(client.getZipCode());
+              try {
+                salvarClienteComCep(clientBase);
+                clientsResponse.setId(String.valueOf(clientBase.getId()));
+                clientsResponse.setName(clientBase.getNome());
+              } catch (CepException e) {
+                try {
+                  throw new BusinessException(e.getErroCode(), e.getMessage(), e.getDetails(),e);
+                } catch (BusinessException ex) {
+                  throw new RuntimeException(ex);
+                }
+              }
+              return clientBase;
+            })
+            .orElseThrow(() -> new BusinessException("Id inválido/Cliente não encontrado"));
 
-      Optional<Cliente> clienteBd = clienteRepository.findById(id);
-      if (clienteBd.isPresent()) {
-        salvarClienteComCep(client);
-      } else {
-        throw new BusinessException("Id inválido/Cliente não encontrado");
-      }
-
-      ClientsDTO result = new ClientsDTO();
-      result.setName(client.getNome());
-      result.setId(String.valueOf(clienteBd.get().getId()));
-      return result;
-    } catch (Exception e) {
-      throw new BusinessException(e.getMessage(), e);
-    }
+    return clientsResponse;
   }
 
   @Override

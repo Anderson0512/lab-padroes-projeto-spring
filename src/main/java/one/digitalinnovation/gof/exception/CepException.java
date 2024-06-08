@@ -17,4 +17,8 @@ public class CepException extends Exception {
         this.message = message;
         this.details = details;
     }
+
+    public CepException(Throwable e) {
+        super(e);
+    }
 }

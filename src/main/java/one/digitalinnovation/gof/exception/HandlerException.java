@@ -21,4 +21,10 @@ public class HandlerException {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(exception.getErrorResponse());
         }
     }
+
+    @ExceptionHandler({RuntimeException.class})
+    public ResponseEntity<Object> runtime(RuntimeException exception) {
+        log.error(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
+    }
 }
