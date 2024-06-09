@@ -102,6 +102,7 @@ public class ClienteServiceImpl implements ClienteService {
 
     clienteRepository.findById(id)
             .map(clientBase -> {
+              clientBase.setId(id);
               clientBase.setNome(client.getName());
               clientBase.setProfissao(client.getProfession());
               clientBase.setIdade(client.getAge());
